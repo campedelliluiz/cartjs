@@ -1,7 +1,7 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
-import { toast } from 'react-toastify';
-import { api } from '../services/api';
-import { Product, Stock } from '../types';
+import { createContext, ReactNode, useContext, useState } from "react";
+import { toast } from "react-toastify";
+import { api } from "../services/api";
+import { Product, Stock } from "../types";
 
 interface CartProviderProps {
   children: ReactNode;
@@ -34,7 +34,15 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const addProduct = async (productId: number) => {
     try {
-      // TODO
+      api
+        .get(`/products?id=${productId}`)
+        .then(function (response) {
+          const obj = response.data[0];
+          setCart([...cart, obj]);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     } catch {
       // TODO
     }
@@ -42,7 +50,8 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const removeProduct = (productId: number) => {
     try {
-      // TODO
+      const updateCart = cart.filter((item) => item.id !== productId);
+      setCart(updateCart);
     } catch {
       // TODO
     }
