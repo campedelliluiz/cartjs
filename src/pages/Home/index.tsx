@@ -34,7 +34,6 @@ const Home = (): JSX.Element => {
       api
         .get("/products")
         .then(function (response) {
-          console.log(response);
           setProducts(response.data);
         })
         .catch(function (error) {

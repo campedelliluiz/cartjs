@@ -8,14 +8,7 @@ import {
 import { useCart } from "../../hooks/useCart";
 // import { formatPrice } from '../../util/format';
 import { Container, ProductTable, Total } from "./styles";
-
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-  amount: number;
-}
+import { Product } from "../../types";
 
 const Cart = (): JSX.Element => {
   const { cart, removeProduct, updateProductAmount } = useCart();
@@ -32,10 +25,14 @@ const Cart = (): JSX.Element => {
 
   function handleProductIncrement(product: Product) {
     // TODO
+
+    updateProductAmount({ productId: product.id, amount: product.amount });
   }
 
   function handleProductDecrement(product: Product) {
-    // TODO
+    const amount = product.amount - 1;
+
+    updateProductAmount({ productId: product.id, amount });
   }
 
   function handleRemoveProduct(productId: number) {
@@ -69,8 +66,8 @@ const Cart = (): JSX.Element => {
                   <button
                     type="button"
                     data-testid="decrement-product"
-                    // disabled={product.amount <= 1}
-                    // onClick={() => handleProductDecrement()}
+                    disabled={item.amount <= 1}
+                    onClick={() => handleProductDecrement(item)}
                   >
                     <MdRemoveCircleOutline size={20} />
                   </button>
@@ -78,12 +75,12 @@ const Cart = (): JSX.Element => {
                     type="text"
                     data-testid="product-amount"
                     readOnly
-                    value={2}
+                    value={item.amount}
                   />
                   <button
                     type="button"
                     data-testid="increment-product"
-                    // onClick={() => handleProductIncrement()}
+                    onClick={() => handleProductIncrement(item)}
                   >
                     <MdAddCircleOutline size={20} />
                   </button>

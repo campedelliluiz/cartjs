@@ -38,7 +38,32 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         .get(`/products?id=${productId}`)
         .then(function (response) {
           const obj = response.data[0];
-          setCart([...cart, obj]);
+
+          const currentProductIndex = cart.findIndex(
+            (product) => product.id === productId
+          );
+
+          switch (currentProductIndex) {
+            case -1:
+              obj.amount = 1;
+              setCart([...cart, obj]);
+              break;
+
+            default:
+              const updatedCart = [...cart];
+
+              const currentProduct = updatedCart.find(
+                (product) => product.id === productId
+              );
+
+              if (currentProduct) {
+                currentProduct.amount += 1;
+              }
+
+              setCart(updatedCart);
+
+              break;
+          }
         })
         .catch(function (error) {
           console.log(error);
@@ -57,12 +82,23 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     }
   };
 
-  const updateProductAmount = async ({
-    productId,
-    amount,
-  }: UpdateProductAmount) => {
+  const updateProductAmount = ({ productId, amount }: UpdateProductAmount) => {
     try {
-      // TODO
+      const updatedCart = [...cart];
+
+      const currentProduct = updatedCart.find(
+        (product) => product.id === productId
+      );
+
+      if (currentProduct) {
+        if (amount >= currentProduct.amount) {
+          currentProduct.amount += 1;
+        } else {
+          currentProduct.amount += -1;
+        }
+      }
+
+      setCart(updatedCart);
     } catch {
       // TODO
     }
